@@ -12,7 +12,7 @@ import http.client
 import json
 
 # Insert your Read-Only API Key.
-API_KEY = "ur381063-288bfb3885e923a80db0f3c5"
+API_KEY = ""
 
 def main():
     """ The main call for the script."""
