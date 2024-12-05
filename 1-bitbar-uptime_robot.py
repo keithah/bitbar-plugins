@@ -1,18 +1,19 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 
-# <bitbar.title>UptimeRobot Monitor</bitbar.title>
-# <bitbar.version>v0.1</bitbar.version>
-# <bitbar.author>Finn LeSueur</bitbar.author>
-# <bitbar.author.github>finnito</bitbar.author.github>
-# <bitbar.desc>Get UptimeRobot statistics for an account.</bitbar.desc>
-# <bitbar.dependencies>python</bitbar.dependencies>
-# <bitbar.abouturl>https://gitlab.com/Finnito/bitbar-plugins</bitbar.abouturl>
+# <xbar.title>UptimeRobot Monitor</xbar.title>
+# <xbar.version>v0.1</xbar.version>
+# <xbar.author>Finn LeSueur</xbar.author>
+# <xbar.author.github>finnito</xbar.author.github>
+# <xbar.desc>Get UptimeRobot statistics for an account.</xbar.desc>
+# <xbar.image>https://uptimerobot.com/assets/img/logo_plain.png</xbar.image>
+# <xbar.dependencies>python</xbar.dependencies>
+# <xbar.abouturl>https://gitlab.com/Finnito/bitbar-uptime_robot</xbar.abouturl>
 
 import http.client
 import json
 
 # Insert your Read-Only API Key.
-API_KEY = "ur381063-288bfb3885e923a80db0f3c5"
+API_KEY = "ur38416-12000810269adb201088e6de"
 
 def main():
     """ The main call for the script."""
@@ -40,7 +41,7 @@ def getMonitors():
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
-        }
+    }
      
     conn.request("POST", "/v2/getMonitors", payload, headers)
      
@@ -64,12 +65,14 @@ def countUpMonitors(resp):
 
 
 def parseMonitors(resp):
-    """ Iterates over the repsonse
+    """ Iterates over the response
     from getMonitors to create a string
     with the name of the monitor and
     its status using emoji.
     """
-    upMonitors = 0
+    # Debug: Print the response structure
+    # print(json.dumps(resp, indent=2))
+    
     output = []
     fmtString = "{1}  {0} ({3}ms)|href={2}"
 
@@ -77,7 +80,13 @@ def parseMonitors(resp):
         status = monitor["status"]
         name = monitor["friendly_name"]
         url = monitor["url"]
-        responseTime = int(float(monitor["average_response_time"]))
+        
+        # Add error handling for response time
+        try:
+            responseTime = int(float(monitor.get("average_response_time", 0)))
+        except (ValueError, TypeError):
+            responseTime = 0
+
         if (status == 0):
             output.append(fmtString.format(name, "⏸", url, responseTime))
         elif (status == 1):
@@ -117,4 +126,4 @@ Icon Definitions
 
 
 if __name__== "__main__":
-  main()
+    main()
